@@ -18,11 +18,12 @@ recompile.
 
 
 ## Setup Instructions
+This project goes into the "apps" folder at the root of your OpenFrameworks folder.
 To build this project, you will need:
 - Visual Studio 2015
 - OpenFrameworks 0.9.3
 - OpenFrameworks addon for Visual Studio (optional, recommended)
-- In the addons folder for OpenFrameworks:
+- In the addons folder at the root of your OpenFrameworks folder:
 	* [ofxImGui](https://github.com/jvcleave/ofxImGui)
 	* [ofxFontStash](https://github.com/armadillu/ofxFontStash)
 	* [ofxTimeMeasurements](https://github.com/armadillu/ofxTimeMeasurements)
