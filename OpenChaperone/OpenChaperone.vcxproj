@@ -77,16 +77,25 @@
     <TargetName>$(ProjectName)_debug</TargetName>
     <LinkIncremental>true</LinkIncremental>
     <GenerateManifest>true</GenerateManifest>
+    <IncludePath>$(ProjectDir)\frameworks\opencv\include;$(ProjectDir)\frameworks\libusb\include;$(ProjectDir)\src;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)\frameworks\opencv\lib\$(Configuration);$(ProjectDir)\frameworks\libusb\lib\x64;$(LibraryPath)</LibraryPath>
+    <CustomBuildBeforeTargets>
+    </CustomBuildBeforeTargets>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>bin\</OutDir>
     <IntDir>obj\$(Configuration)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(ProjectDir)\src;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>bin\</OutDir>
     <IntDir>obj\$(Configuration)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(ProjectDir)\frameworks\opencv\include;$(ProjectDir)\frameworks\libusb\include;$(ProjectDir)\src;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)\frameworks\opencv\lib\$(Configuration);$(ProjectDir)\frameworks\libusb\lib\x64;$(LibraryPath)</LibraryPath>
+    <CustomBuildBeforeTargets>
+    </CustomBuildBeforeTargets>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -95,16 +104,18 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>
-..\..\..\addons\ofxImGui-master\src;
-..\..\..\addons\ofxImGui-master\libs\imgui\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\addons\ofxImGui-master\src;
+..\..\..\addons\ofxImGui-master\libs\imgui\src;
+C:\Users\Jon\Dev\Projects\of_v0.9.3_vs_release\addons\ofxTimeMeasurements-master\src;
+C:\Users\Jon\Dev\Projects\of_v0.9.3_vs_release\addons\ofxFontStash-master\src;
+C:\Users\Jon\Dev\Projects\of_v0.9.3_vs_release\addons\ofxFontStash-master\libs\fontstash\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);libconfig++-9</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
@@ -114,24 +125,40 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>USE_OFX_FONTSTASH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>
-..\..\..\addons\ofxImGui-master\src;
-..\..\..\addons\ofxImGui-master\libs\imgui\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>opencv_world310d.lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAs>CompileAsCpp</CompileAs>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opencv_world310d.lib;libusb-1.0d.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
     </PostBuildEvent>
+    <CustomBuildStep>
+      <Command>
+      </Command>
+    </CustomBuildStep>
+    <CustomBuildStep>
+      <Message>
+      </Message>
+    </CustomBuildStep>
+    <PreBuildEvent>
+      <Command>mkdir $(ProjectDir)bin\data
+ROBOCOPY $(ProjectDir)data $(ProjectDir)bin\data *.* /E njs /njh /np /fp /bytes
+if errorlevel 1 exit 0 else exit %errorlevel%</Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>Copying Data Files</Message>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -139,9 +166,11 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>
-..\..\..\addons\ofxImGui-master\src;
-..\..\..\addons\ofxImGui-master\libs\imgui\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\addons\ofxImGui-master\src;
+..\..\..\addons\ofxImGui-master\libs\imgui\src;
+C:\Users\Jon\Dev\Projects\of_v0.9.3_vs_release\addons\ofxTimeMeasurements-master\src;
+C:\Users\Jon\Dev\Projects\of_v0.9.3_vs_release\addons\ofxFontStash-master\src;
+C:\Users\Jon\Dev\Projects\of_v0.9.3_vs_release\addons\ofxFontStash-master\libs\fontstash\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAs>CompileAsCpp</CompileAs>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
@@ -152,7 +181,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);libconfig++-9</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
@@ -161,13 +190,17 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>USE_OFX_FONTSTASH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>
-..\..\..\addons\ofxImGui-master\src;
-..\..\..\addons\ofxImGui-master\libs\imgui\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\addons\ofxImGui-master\src;
+..\..\..\addons\ofxImGui-master\libs\imgui\src;
+C:\Users\Jon\Dev\Projects\of_v0.9.3_vs_release\addons\ofxTimeMeasurements-master\src;
+C:\Users\Jon\Dev\Projects\of_v0.9.3_vs_release\addons\ofxFontStash-master\src;
+C:\Users\Jon\Dev\Projects\of_v0.9.3_vs_release\addons\ofxFontStash-master\libs\fontstash\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAs>CompileAsCpp</CompileAs>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
@@ -176,13 +209,32 @@
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);opencv_world310.lib;libusb-1.0.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
     </PostBuildEvent>
+    <CustomBuildStep>
+      <Command>
+      </Command>
+    </CustomBuildStep>
+    <CustomBuildStep>
+      <Message>
+      </Message>
+    </CustomBuildStep>
+    <PreBuildEvent>
+      <Command>mkdir $(ProjectDir)bin\data
+ROBOCOPY $(ProjectDir)data $(ProjectDir)bin\data *.* /E njs /njh /np /fp /bytes
+if errorlevel 1 exit 0 else exit %errorlevel%</Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>Copying Data Files</Message>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\addons\ofxFontStash-master\libs\fontstash\src\fontstash.c" />
+    <ClCompile Include="..\..\..\addons\ofxFontStash-master\libs\fontstash\src\stb_truetype.c" />
+    <ClCompile Include="..\..\..\addons\ofxFontStash-master\src\ofxFontStash.cpp" />
     <ClCompile Include="..\..\..\addons\ofxImGui-master\libs\imgui\src\imgui.cpp" />
     <ClCompile Include="..\..\..\addons\ofxImGui-master\libs\imgui\src\imgui_demo.cpp" />
     <ClCompile Include="..\..\..\addons\ofxImGui-master\libs\imgui\src\imgui_draw.cpp" />
@@ -191,10 +243,29 @@
     <ClCompile Include="..\..\..\addons\ofxImGui-master\src\EngineGLFW.cpp" />
     <ClCompile Include="..\..\..\addons\ofxImGui-master\src\EngineOpenGLES.cpp" />
     <ClCompile Include="..\..\..\addons\ofxImGui-master\src\ofxImGui.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxTimeMeasurements-master\src\ofxTimeMeasurements.cpp" />
+    <ClCompile Include="src\camera\CameraCapture.cpp" />
+    <ClCompile Include="src\camera\ps3eye\driver\ps3eye.cpp" />
+    <ClCompile Include="src\camera\ps3eye\PS3EyeCapture.cpp" />
+    <ClCompile Include="src\camera\system\SystemCameraCapture.cpp" />
+    <ClCompile Include="src\config\ConfigHandler.cpp" />
+    <ClCompile Include="src\modules\camera_calibrator\CameraCalibratorModule.cpp" />
+    <ClCompile Include="src\gui\performance\FpsGraph.cpp" />
+    <ClCompile Include="src\compositor\ImageCompositor.cpp" />
+    <ClCompile Include="src\config\jsoncpp.cpp" />
+    <ClCompile Include="src\gui\GUIHandler.cpp" />
+    <ClCompile Include="src\modules\edge_detector\EdgeDetectorModule.cpp" />
+    <ClCompile Include="src\modules\edge_detector\ParallelContourDetector.cpp" />
+    <ClCompile Include="src\modules\face_detector\FaceDetectorModule.cpp" />
+    <ClCompile Include="src\OpenChaperoneGlobals.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\ofApp.cpp" />
+    <ClCompile Include="src\OpenChaperoneCore.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\addons\ofxFontStash-master\libs\fontstash\src\fontstash.h" />
+    <ClInclude Include="..\..\..\addons\ofxFontStash-master\libs\fontstash\src\stb_truetype.h" />
+    <ClInclude Include="..\..\..\addons\ofxFontStash-master\src\ofxFontStash.h" />
     <ClInclude Include="..\..\..\addons\ofxImGui-master\libs\imgui\src\imgui.h" />
     <ClInclude Include="..\..\..\addons\ofxImGui-master\libs\imgui\src\imgui_internal.h" />
     <ClInclude Include="..\..\..\addons\ofxImGui-master\libs\imgui\src\stb_rect_pack.h" />
@@ -207,7 +278,203 @@
     <ClInclude Include="..\..\..\addons\ofxImGui-master\src\imconfig.h" />
     <ClInclude Include="..\..\..\addons\ofxImGui-master\src\ofxImGui.h" />
     <ClInclude Include="..\..\..\addons\ofxImGui-master\src\ThemeTest.h" />
+    <ClInclude Include="..\..\..\addons\ofxTimeMeasurements-master\src\ofxTimeMeasurements.h" />
+    <ClInclude Include="..\..\..\addons\ofxTimeMeasurements-master\src\ofxTimeMeasurementsMacros.h" />
+    <ClInclude Include="..\..\..\addons\ofxTimeMeasurements-master\src\ofxTimeMeasurementsScoped.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\calib3d.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\calib3d\calib3d.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\calib3d\calib3d_c.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\core.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\core\affine.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\core\base.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\core\bufferpool.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\core\core.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\core\core_c.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\core\cuda.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\core\cuda.inl.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\core\cuda_stream_accessor.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\core\cuda_types.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\core\cvdef.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\core\cvstd.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\core\cvstd.inl.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\core\directx.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\core\eigen.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\core\fast_math.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\core\hal\hal.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\core\hal\interface.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\core\hal\intrin.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\core\hal\intrin_cpp.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\core\hal\intrin_neon.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\core\hal\intrin_sse.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\core\ippasync.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\core\mat.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\core\mat.inl.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\core\matx.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\core\neon_utils.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\core\ocl.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\core\ocl_genbase.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\core\opengl.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\core\operations.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\core\optim.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\core\persistence.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\core\private.cuda.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\core\private.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\core\ptr.inl.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\core\saturate.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\core\sse_utils.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\core\traits.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\core\types.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\core\types_c.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\core\utility.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\core\va_intel.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\core\version.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\core\wimage.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\cvconfig.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\features2d.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\features2d\features2d.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\flann.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\flann\allocator.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\flann\all_indices.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\flann\any.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\flann\autotuned_index.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\flann\composite_index.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\flann\config.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\flann\defines.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\flann\dist.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\flann\dummy.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\flann\dynamic_bitset.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\flann\flann.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\flann\flann_base.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\flann\general.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\flann\ground_truth.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\flann\hdf5.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\flann\heap.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\flann\hierarchical_clustering_index.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\flann\index_testing.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\flann\kdtree_index.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\flann\kdtree_single_index.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\flann\kmeans_index.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\flann\linear_index.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\flann\logger.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\flann\lsh_index.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\flann\lsh_table.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\flann\matrix.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\flann\miniflann.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\flann\nn_index.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\flann\object_factory.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\flann\params.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\flann\random.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\flann\result_set.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\flann\sampling.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\flann\saving.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\flann\simplex_downhill.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\flann\timer.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\highgui.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\highgui\highgui.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\highgui\highgui_c.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\imgcodecs.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\imgcodecs\imgcodecs.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\imgcodecs\imgcodecs_c.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\imgcodecs\ios.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\imgproc.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\imgproc\detail\distortion_model.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\imgproc\imgproc.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\imgproc\imgproc_c.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\imgproc\types_c.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\ml.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\ml\ml.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\objdetect.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\objdetect\detection_based_tracker.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\objdetect\objdetect.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\objdetect\objdetect_c.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\opencv.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\opencv_modules.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\photo.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\photo\cuda.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\photo\photo.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\photo\photo_c.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\shape.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\shape\emdL1.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\shape\hist_cost.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\shape\shape.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\shape\shape_distance.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\shape\shape_transformer.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\stitching.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\stitching\detail\autocalib.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\stitching\detail\blenders.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\stitching\detail\camera.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\stitching\detail\exposure_compensate.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\stitching\detail\matchers.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\stitching\detail\motion_estimators.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\stitching\detail\seam_finders.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\stitching\detail\timelapsers.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\stitching\detail\util.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\stitching\detail\util_inl.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\stitching\detail\warpers.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\stitching\detail\warpers_inl.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\stitching\warpers.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\superres.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\superres\optical_flow.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\video.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\videoio.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\videoio\cap_ios.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\videoio\videoio.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\videoio\videoio_c.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\videostab.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\videostab\deblurring.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\videostab\fast_marching.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\videostab\fast_marching_inl.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\videostab\frame_source.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\videostab\global_motion.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\videostab\inpainting.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\videostab\log.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\videostab\motion_core.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\videostab\motion_stabilizing.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\videostab\optical_flow.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\videostab\outlier_rejection.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\videostab\ring_buffer.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\videostab\stabilizer.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\videostab\wobble_suppression.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\video\background_segm.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\video\tracking.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\video\tracking_c.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\video\video.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv2\world.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv\cv.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv\cv.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv\cvaux.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv\cvaux.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv\cvwimage.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv\cxcore.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv\cxcore.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv\cxeigen.hpp" />
+    <ClInclude Include="frameworks\opencv\include\opencv\cxmisc.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv\highgui.h" />
+    <ClInclude Include="frameworks\opencv\include\opencv\ml.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="src\camera\CameraCapture.hpp" />
+    <ClInclude Include="src\camera\CaptureBase.hpp" />
+    <ClInclude Include="src\camera\ps3eye\driver\ps3eye.h" />
+    <ClInclude Include="src\camera\ps3eye\PS3EyeCapture.hpp" />
+    <ClInclude Include="src\camera\system\SystemCameraCapture.hpp" />
+    <ClInclude Include="src\config\ConfigHandler.hpp" />
+    <ClInclude Include="src\gui\ImGuiColorPicker.hpp" />
+    <ClInclude Include="src\modules\camera_calibrator\CameraCalibratorModule.hpp" />
+    <ClInclude Include="src\gui\performance\FpsGraph.hpp" />
+    <ClInclude Include="src\compositor\ImageCompositor.hpp" />
+    <ClInclude Include="src\config\json\json-forwards.h" />
+    <ClInclude Include="src\config\json\json.h" />
+    <ClInclude Include="src\gui\GUIHandler.hpp" />
+    <ClInclude Include="src\gui\UsesGUI.hpp" />
+    <ClInclude Include="src\modules\edge_detector\EdgeDetectorModule.hpp" />
+    <ClInclude Include="src\modules\edge_detector\ParallelContourDetector.hpp" />
+    <ClInclude Include="src\modules\face_detector\FaceDetectorModule.hpp" />
+    <ClInclude Include="src\modules\ModuleCommon.hpp" />
+    <ClInclude Include="src\OpenChaperoneGlobals.hpp" />
     <ClInclude Include="src\ofApp.h" />
+    <ClInclude Include="src\OpenChaperoneCore.hpp" />
+    <ClInclude Include="src\util\AppLog.hpp" />
+    <ClInclude Include="src\util\ColorConversion.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="$(OF_ROOT)\libs\openFrameworksCompiled\project\vs\openframeworksLib.vcxproj">
@@ -220,6 +487,36 @@
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">/D_DEBUG %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>$(OF_ROOT)\libs\openFrameworksCompiled\project\vs</AdditionalIncludeDirectories>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="data\config\config.json" />
+    <None Include="data\data\model.yml.gz" />
+    <None Include="data\icons\icon-debug.icns" />
+    <None Include="data\icons\icon.icns" />
+    <None Include="readme.md" />
+    <None Include="style_guide.md" />
+    <None Include="notes.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="data\fonts\ProggyCleanCE.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="data\icons\icon-debug.ico" />
+    <Image Include="data\icons\icon.ico" />
+    <Image Include="icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="data\data\haarcascade_eye.xml" />
+    <Xml Include="data\data\haarcascade_eye_tree_eyeglasses.xml" />
+    <Xml Include="data\data\haarcascade_frontalface_alt.xml" />
+    <Xml Include="data\data\haarcascade_frontalface_alt2.xml" />
+    <Xml Include="data\data\haarcascade_frontalface_alt_tree.xml" />
+    <Xml Include="data\data\haarcascade_frontalface_default.xml" />
+    <Xml Include="data\data\haarcascade_smile.xml" />
+    <Xml Include="data\lbpcascades\lbpcascade_frontalcatface.xml" />
+    <Xml Include="data\lbpcascades\lbpcascade_frontalface.xml" />
+    <Xml Include="data\lbpcascades\lbpcascade_profileface.xml" />
+    <Xml Include="data\lbpcascades\lbpcascade_silverware.xml" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ProjectExtensions>

@@ -2,9 +2,21 @@
 
 #include "ofMain.h"
 
-class ofApp : public ofBaseApp{
+#include "ofxImGui.h"
 
+#include "OpenChaperoneCore.hpp"
+#include "compositor/ImageCompositor.hpp"
+#include "config/ConfigHandler.hpp"
+#include "gui/UsesGUI.hpp"
+#include "gui/performance/FpsGraph.hpp"
+
+#include <opencv2/opencv.hpp>
+
+class ofApp : public ofBaseApp, public UsesGUI {
 	public:
+		ofApp();
+		~ofApp();
+
 		void setup();
 		void update();
 		void draw();
@@ -20,5 +32,29 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
+
+		void DrawGUI();
+		void DrawAllGUI();
 		
+		OpenChaperoneCore *core;
+		ImageCompositor *compositor;
+
+		bool showGeneralSettingsWindow = false;
+		bool showLog = false;					//Show log window
+		bool showHelp = false;					//Show help window
+
+		void ToggleTimingWindow();
+
+		void SetGUITheme();
+
+		FpsGraph fpsGraph = FpsGraph();
+		bool showPerformanceGraph = true;		//FpsGraph visibility on screen
+
+		float coreFps;
+		float msFrameTarget = 1000.0f / 60.0f;
+
+		bool useVerticalSync = false;
+
+		ofxImGui gui;
+
 };
