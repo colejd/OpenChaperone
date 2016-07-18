@@ -1,9 +1,9 @@
 # Style Guide
 
 ### Casing:
-* Variable names use camelCasing
-* Function names use PascalCasing
-* Define / Const names are all caps with underscores for spaces (e.g. "CONST_NAME")
+* Variable names use `camelCasing`
+* Function names use `PascalCasing`
+* Define / Const names are all caps with underscores for spaces (e.g. `CONST_NAME`)
 
 ###Example:
 ```
