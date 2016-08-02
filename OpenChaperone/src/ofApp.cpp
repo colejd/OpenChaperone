@@ -37,17 +37,6 @@ void ofApp::setup(){
 	gui.setup();
 	SetGUITheme();
 
-	//Apply config file settings
-	int winWidth = ConfigHandler::GetValue("WINDOW_START_WIDTH", 640).asInt();
-	int winHeight = ConfigHandler::GetValue("WINDOW_START_HEIGHT", 480).asInt();
-	ofSetWindowShape(winWidth, winHeight);
-	int winX = ConfigHandler::GetValue("WINDOW_START_X", 0).asInt();
-	int winY = ConfigHandler::GetValue("WINDOW_START_Y", 0).asInt();
-	ofSetWindowPosition(winX, winY);
-	ofSetFullscreen(ConfigHandler::GetValue("WINDOW_START_FULLSCREEN", false).asBool());
-	useVerticalSync = ConfigHandler::GetValue("USE_VERTICAL_SYNC", false).asBool();
-	ofSetVerticalSync(useVerticalSync);
-
 	//ofSetFrameRate(120);
 
 	//Init class members
