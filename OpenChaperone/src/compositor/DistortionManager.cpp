@@ -247,17 +247,20 @@ void DistortionManager::RenderDistortion(ofFbo& leftFbo, ofFbo& rightFbo) {
 	//render left lens (first half of index array )
 	//glBindTexture(GL_TEXTURE_2D, leftEyeDesc._nResolveTextureId);
 	//glBindTexture(GL_TEXTURE_2D, (GLuint)leftFbo.getTexture().getTextureData().textureID); //Causes texture to become unrecoverable (GetTextureReference?)
-	leftFbo.getTextureReference().bind();
+
+	_lensShader.setUniformTexture("tex0", leftFbo.getTextureReference(), leftFbo.getTextureReference().getTextureData().textureID); //At 0, texture is black
+	//leftFbo.getTextureReference().bind();
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glDrawElements(GL_TRIANGLES, _uiIndexSize / 2, GL_UNSIGNED_SHORT, 0);
-	leftFbo.getTextureReference().unbind();
+	//leftFbo.getTextureReference().unbind();
 
 	//render right lens (second half of index array )
 	//glBindTexture(GL_TEXTURE_2D, rightEyeDesc._nResolveTextureId);
 	//glBindTexture(GL_TEXTURE_2D, (GLuint)rightFbo.getTexture().getTextureData().textureID); //Causes texture to become unrecoverable
+	_lensShader.setUniformTexture("tex0", rightFbo.getTextureReference(), rightFbo.getTextureReference().getTextureData().textureID);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
