@@ -48,6 +48,7 @@ void ofApp::update(){
 	//Update opencv stuff
 	TS_START_NIF("core");
 	core->Update();
+	compositor->Update();
 	TS_STOP_NIF("core");
 	coreFps = TIME_SAMPLE_GET_LAST_DURATION("core");
 }
@@ -283,15 +284,18 @@ void ofApp::keyPressed(int key) {
 	else if (key == 's' || key == 'S') {
 		compositor->swapStereoSides = !(compositor->swapStereoSides);
 	}
-	else if (key == 'e' || key == 'E') {
-		core->edgeDetector.ToggleGUIEnabled();
-		//core->edgeDetector.ToggleEnabled();
+	else if (key == 'd' || key == 'D') {
+		compositor->doDistortion = !compositor->doDistortion;
 	}
 	else if (key == '-' || key == '_') {
 		compositor->IncrementConvergence(-1);
 	}
 	else if (key == '=' || key == '+') {
 		compositor->IncrementConvergence(1);
+	}
+	else if (key == 'e' || key == 'E') {
+		core->edgeDetector.ToggleGUIEnabled();
+		//core->edgeDetector.ToggleEnabled();
 	}
 }
 

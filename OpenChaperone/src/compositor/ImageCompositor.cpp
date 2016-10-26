@@ -1,4 +1,5 @@
 #include "ImageCompositor.hpp"
+#include "ImageCompositor.hpp"
 #include "OpenChaperoneGlobals.hpp"
 
 using namespace cv;
@@ -27,6 +28,9 @@ ImageCompositor::ImageCompositor(const int width, const int height) {
 
 	//ofEnableArbTex();
 
+	distortion = DistortionManager();
+	distortion.Init();
+
 }
 
 ImageCompositor::~ImageCompositor() {
@@ -49,6 +53,9 @@ void ImageCompositor::DrawGUI() {
 }
 
 void ImageCompositor::DrawWindowFbo() {
+	/*if (doDistortion) {
+		distortion.RenderStereoTargets(leftFbo, rightFbo);
+	}*/
 	TS_START_NIF("Draw Window FBO");
 	ofClear(0, 0, 0);
 	windowFbo.begin();
@@ -64,6 +71,11 @@ void ImageCompositor::DrawWindowFbo() {
 	ofRectangle scaled = AspectFitRectToTarget(windowFboRect, windowRect);
 	windowFbo.draw(scaled);
 	TS_STOP_NIF("Draw Window FBO");
+
+	if (doDistortion) {
+		//distortion.RenderStereoTargets(leftFbo, rightFbo);
+		distortion.RenderDistortion(leftFbo, rightFbo);
+	}
 }
 
 void ImageCompositor::DrawMatsToFbo(const cv::InputArray leftMat, cv::InputArray rightMat)
@@ -211,4 +223,8 @@ ofRectangle ImageCompositor::AspectFillRectToTarget(ofRectangle original, ofRect
 	scaledRect.y = (target.height - scaledRect.height) / 2.0f;
 
 	return scaledRect;
+}
+
+void ImageCompositor::Update()
+{
 }

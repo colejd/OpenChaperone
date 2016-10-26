@@ -8,6 +8,10 @@
 
 #include <opencv2/opencv.hpp>
 
+#include "DistortionManager.hpp"
+
+//#include "ofxOpenVR.h"
+
 /* 
 Responsible for drawing images from the core to the screen in a nice way. 
 */
@@ -63,6 +67,24 @@ public:
 	int convergenceMax = 80;
 	void IncrementConvergence(int inc);
 
+	//void InitOpenVR();
+	//void render(vr::Hmd_Eye nEye);
+	void Update();
+
+	DistortionManager distortion;
+	bool doDistortion = true;
+
 private:
+	//ofxOpenVR _openVR;
+
+	ofImage _texture;
+	ofBoxPrimitive _box;
+	ofMatrix4x4 _translateMatrix;
+	ofShader _shader;
+
+	ofBoxPrimitive _controllerBox;
+	ofShader _controllersShader;
+
+	ofLight pointLight;
 
 };

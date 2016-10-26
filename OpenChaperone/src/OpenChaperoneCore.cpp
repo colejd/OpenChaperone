@@ -22,11 +22,22 @@ void OpenChaperoneCore::Setup()
 	edgeDetector = EdgeDetectorModule();
 	faceDetector = FaceDetectorModule();
 
-	capture1 = new CameraCapture();
-	capture1->StartCapturing(0, CameraCapture::DEVICE_TYPE::PS3EYE, true);
+	bool demoMode = ConfigHandler::GetValue("WEBCAM_DEMO_MODE", false).asBool();
+	if (demoMode == false) {
+		capture1 = new CameraCapture();
+		capture1->StartCapturing(0, CameraCapture::DEVICE_TYPE::PS3EYE, true);
 
-	capture2 = new CameraCapture();
-	capture2->StartCapturing(1, CameraCapture::DEVICE_TYPE::PS3EYE, true);
+		capture2 = new CameraCapture();
+		capture2->StartCapturing(1, CameraCapture::DEVICE_TYPE::PS3EYE, true);
+	}
+	else {
+		//Demo mode: show only input from the webcam and make full screen
+		capture1 = new CameraCapture();
+		capture1->StartCapturing(0, CameraCapture::DEVICE_TYPE::GENERIC, true);
+
+		capture2 = new CameraCapture();
+		capture2->StartCapturing(1, CameraCapture::DEVICE_TYPE::PS3EYE, true);
+	}
 
 }
 

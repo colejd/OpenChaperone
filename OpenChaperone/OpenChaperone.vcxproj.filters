@@ -62,6 +62,7 @@
     <ClCompile Include="src\modules\camera_calibrator\CameraCalibratorModule.cpp" />
     <ClCompile Include="src\gui\performance\FpsGraph.cpp" />
     <ClCompile Include="src\camera\system\SystemCameraCapture.cpp" />
+    <ClCompile Include="src\compositor\DistortionManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -364,6 +365,7 @@
     </ClInclude>
     <ClInclude Include="src\util\ColorConversion.hpp" />
     <ClInclude Include="src\gui\ImGuiColorPicker.hpp" />
+    <ClInclude Include="src\compositor\DistortionManager.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="icon.rc" />
@@ -397,5 +399,9 @@
     <Xml Include="data\lbpcascades\lbpcascade_frontalface.xml" />
     <Xml Include="data\lbpcascades\lbpcascade_profileface.xml" />
     <Xml Include="data\lbpcascades\lbpcascade_silverware.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="data\distortion_indices.txt" />
+    <Text Include="data\distortion_verts.txt" />
   </ItemGroup>
 </Project>

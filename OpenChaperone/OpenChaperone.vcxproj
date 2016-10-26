@@ -96,6 +96,8 @@
     <LibraryPath>$(ProjectDir)\frameworks\opencv\lib\$(Configuration);$(ProjectDir)\frameworks\libusb\lib\x64;$(LibraryPath)</LibraryPath>
     <CustomBuildBeforeTargets>
     </CustomBuildBeforeTargets>
+    <CodeAnalysisRuleSet>C:\Program Files (x86)\Microsoft Visual Studio 14.0\Team Tools\Static Analysis Tools\Rule Sets\NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -201,6 +203,7 @@ C:\Users\Jon\Dev\Projects\of_v0.9.3_vs_release\addons\ofxFontStash-master\libs\f
       <CompileAs>CompileAsCpp</CompileAs>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
+      <EnablePREfast>true</EnablePREfast>
     </ClCompile>
     <Link>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
@@ -248,6 +251,7 @@ if errorlevel 1 exit 0 else exit %errorlevel%</Command>
     <ClCompile Include="src\camera\ps3eye\driver\ps3eye.cpp" />
     <ClCompile Include="src\camera\ps3eye\PS3EyeCapture.cpp" />
     <ClCompile Include="src\camera\system\SystemCameraCapture.cpp" />
+    <ClCompile Include="src\compositor\DistortionManager.cpp" />
     <ClCompile Include="src\config\ConfigHandler.cpp" />
     <ClCompile Include="src\modules\camera_calibrator\CameraCalibratorModule.cpp" />
     <ClCompile Include="src\gui\performance\FpsGraph.cpp" />
@@ -457,6 +461,7 @@ if errorlevel 1 exit 0 else exit %errorlevel%</Command>
     <ClInclude Include="src\camera\ps3eye\driver\ps3eye.h" />
     <ClInclude Include="src\camera\ps3eye\PS3EyeCapture.hpp" />
     <ClInclude Include="src\camera\system\SystemCameraCapture.hpp" />
+    <ClInclude Include="src\compositor\DistortionManager.hpp" />
     <ClInclude Include="src\config\ConfigHandler.hpp" />
     <ClInclude Include="src\gui\ImGuiColorPicker.hpp" />
     <ClInclude Include="src\modules\camera_calibrator\CameraCalibratorModule.hpp" />
@@ -517,6 +522,10 @@ if errorlevel 1 exit 0 else exit %errorlevel%</Command>
     <Xml Include="data\lbpcascades\lbpcascade_frontalface.xml" />
     <Xml Include="data\lbpcascades\lbpcascade_profileface.xml" />
     <Xml Include="data\lbpcascades\lbpcascade_silverware.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="data\distortion_indices.txt" />
+    <Text Include="data\distortion_verts.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ProjectExtensions>
