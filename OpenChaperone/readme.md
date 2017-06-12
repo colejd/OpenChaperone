@@ -1,4 +1,4 @@
-#OpenChaperone
+# OpenChaperone
 
 #### Open-source AR for your VR headset
 
