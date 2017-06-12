@@ -13,18 +13,6 @@ DistortionManager::~DistortionManager()
 		glDeleteBuffers(1, &_glIDVertBuffer);
 		glDeleteBuffers(1, &_glIDIndexBuffer);
 
-		glDeleteRenderbuffers(1, &leftEyeDesc._nDepthBufferId);
-		glDeleteTextures(1, &leftEyeDesc._nRenderTextureId);
-		glDeleteFramebuffers(1, &leftEyeDesc._nRenderFramebufferId);
-		glDeleteTextures(1, &leftEyeDesc._nResolveTextureId);
-		glDeleteFramebuffers(1, &leftEyeDesc._nResolveFramebufferId);
-
-		glDeleteRenderbuffers(1, &rightEyeDesc._nDepthBufferId);
-		glDeleteTextures(1, &rightEyeDesc._nRenderTextureId);
-		glDeleteFramebuffers(1, &rightEyeDesc._nRenderFramebufferId);
-		glDeleteTextures(1, &rightEyeDesc._nResolveTextureId);
-		glDeleteFramebuffers(1, &rightEyeDesc._nResolveFramebufferId);
-
 		if (_unLensVAO != 0)
 		{
 			glDeleteVertexArrays(1, &_unLensVAO);
@@ -53,13 +41,6 @@ bool DistortionManager::initGL() {
 
 	if (!BindShaders()) {
 		ocg::app_log.AddLog("initGL(): Could not create shaders. \n");
-		return false;
-	}
-
-	//setupCameras();
-
-	if (!SetupStereoRenderTargets()) {
-		ocg::app_log.AddLog("initGL(): Could not set up stereo render targets. \n");
 		return false;
 	}
 
@@ -100,8 +81,8 @@ bool DistortionManager::SetupDistortionFromFiles()
 
 	GetStoredDistortion(vVerts, vIndices);
 
-	std::cout << "Vertex length: " << vVerts.size() << "\n";
-	std::cout << "Index length: " << vIndices.size() << "\n";
+	//std::cout << "Vertex length: " << vVerts.size() << "\n";
+	//std::cout << "Index length: " << vIndices.size() << "\n";
 
 	_uiIndexSize = vIndices.size();
 
@@ -141,125 +122,41 @@ bool DistortionManager::SetupDistortionFromFiles()
 	return true;
 }
 
-//--------------------------------------------------------------
-bool DistortionManager::CreateFrameBuffer(int nWidth, int nHeight, FramebufferDesc &framebufferDesc)
-{
-	// Still using direct OpenGL calls to create the FBO as OF does not allow the create of GL_TEXTURE_2D_MULTISAMPLE texture.
-
-	glGenFramebuffers(1, &framebufferDesc._nRenderFramebufferId);
-	glBindFramebuffer(GL_FRAMEBUFFER, framebufferDesc._nRenderFramebufferId);
-
-	glGenRenderbuffers(1, &framebufferDesc._nDepthBufferId);
-	glBindRenderbuffer(GL_RENDERBUFFER, framebufferDesc._nDepthBufferId);
-	glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_DEPTH_COMPONENT, nWidth, nHeight);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, framebufferDesc._nDepthBufferId);
-
-	glGenTextures(1, &framebufferDesc._nRenderTextureId);
-	glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, framebufferDesc._nRenderTextureId);
-	glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGBA8, nWidth, nHeight, true);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, framebufferDesc._nRenderTextureId, 0);
-
-	glGenFramebuffers(1, &framebufferDesc._nResolveFramebufferId);
-	glBindFramebuffer(GL_FRAMEBUFFER, framebufferDesc._nResolveFramebufferId);
-
-	glGenTextures(1, &framebufferDesc._nResolveTextureId);
-	glBindTexture(GL_TEXTURE_2D, framebufferDesc._nResolveTextureId);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, nWidth, nHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, framebufferDesc._nResolveTextureId, 0);
-
-	// check FBO status
-	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-	if (status != GL_FRAMEBUFFER_COMPLETE)
-	{
-		return false;
-	}
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-	return true;
-}
-
-//--------------------------------------------------------------
-bool DistortionManager::SetupStereoRenderTargets()
-{
-	//if (!_pHMD)
-	//	return false;
-
-	//_pHMD->GetRecommendedRenderTargetSize(&_nRenderWidth, &_nRenderHeight);
-	//ocg::app_log.AddLog("Recommended render target size: %s, %s\n", _nRenderWidth, _nRenderHeight);
-	_nRenderWidth = ofGetWindowWidth();
-	_nRenderHeight = ofGetWindowHeight();
-
-	if (!CreateFrameBuffer(_nRenderWidth, _nRenderHeight, leftEyeDesc))
-		return false;
-
-	if (!CreateFrameBuffer(_nRenderWidth, _nRenderHeight, rightEyeDesc))
-		return false;
-
-	return true;
-}
-
-void DistortionManager::RenderDistortion(GLuint& left, GLuint& right)
-{
-	//glDisable(GL_DEPTH_TEST);
-	//glViewport(0, 0, ofGetWidth(), ofGetHeight()); //Do we need this?
-
-	//glBindVertexArray(_unLensVAO);
-	//_lensShader.begin();
-
-	////std::cout << left << "\n";
-
-	////render left lens (first half of index array )
-	////glBindTexture(GL_TEXTURE_2D, leftEyeDesc._nResolveTextureId);
-	////glBindTexture(GL_TEXTURE_2D, left); //Causes texture to become unrecoverable
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	//glDrawElements(GL_TRIANGLES, _uiIndexSize / 2, GL_UNSIGNED_SHORT, 0);
-
-	////render right lens (second half of index array )
-	////glBindTexture(GL_TEXTURE_2D, rightEyeDesc._nResolveTextureId);
-	//glBindTexture(GL_TEXTURE_2D, right); //Causes texture to become unrecoverable
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	//glDrawElements(GL_TRIANGLES, _uiIndexSize / 2, GL_UNSIGNED_SHORT, (const void *)(_uiIndexSize));
-
-	//glBindTexture(GL_TEXTURE_2D, 0); //Added by Jon, trying to release hold on FBO textures
-	//glBindVertexArray(0);
-	//_lensShader.end();
-}
-
 void DistortionManager::RenderDistortion(ofFbo& leftFbo, ofFbo& rightFbo) {
+
+	////Pull the textures from the screen
+	//ofTexture left;
+	//left.allocate(ofGetWindowWidth() / 2, ofGetWindowHeight(), GL_RGBA);
+	//left.loadScreenData(0, 0, ofGetWindowWidth() / 2, ofGetWindowHeight());
+
+	///*ofImage leftImg;
+	//leftImg.grabScreen(0, 0, ofGetWidth() / 2, ofGetHeight());
+	//ofTexture left = leftImg.getTextureReference();*/
+
+	//ofTexture right;
+	//right.allocate(ofGetWindowWidth() / 2, ofGetWindowHeight(), GL_RGBA);
+	//right.loadScreenData(ofGetWindowWidth() / 2, 0, ofGetWindowWidth() / 2, ofGetWindowHeight());
+
 	glDisable(GL_DEPTH_TEST);
-	glViewport(0, 0, ofGetWidth(), ofGetHeight()); //Do we need this?
+	glViewport(0, 0, ofGetWidth(), ofGetHeight()); //Draw at screen space
 
 	glBindVertexArray(_unLensVAO);
-	//_lensShader.setUniformTexture("mytexture", leftFbo.getTextureReference(), 0);
 	_lensShader.begin();
 
-	//std::cout << left << "\n";
+	//std::cout << leftFbo.getTextureReference().getWidth() << ", " << leftFbo.getTextureReference().getHeight() << "\n";
 
 	//render left lens (first half of index array )
 	//glBindTexture(GL_TEXTURE_2D, leftEyeDesc._nResolveTextureId);
-	//glBindTexture(GL_TEXTURE_2D, (GLuint)leftFbo.getTexture().getTextureData().textureID); //Causes texture to become unrecoverable (GetTextureReference?)
-
-	_lensShader.setUniformTexture("tex0", leftFbo.getTextureReference(), leftFbo.getTextureReference().getTextureData().textureID); //At 0, texture is black
-	//leftFbo.getTextureReference().bind();
+	_lensShader.setUniformTexture("tex0", leftFbo.getTextureReference(), leftFbo.getTextureReference().getTextureData().textureID);
+	//_lensShader.setUniformTexture("tex0", left, left.getTextureData().textureID);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glDrawElements(GL_TRIANGLES, _uiIndexSize / 2, GL_UNSIGNED_SHORT, 0);
-	//leftFbo.getTextureReference().unbind();
 
 	//render right lens (second half of index array )
 	//glBindTexture(GL_TEXTURE_2D, rightEyeDesc._nResolveTextureId);
-	//glBindTexture(GL_TEXTURE_2D, (GLuint)rightFbo.getTexture().getTextureData().textureID); //Causes texture to become unrecoverable
 	_lensShader.setUniformTexture("tex0", rightFbo.getTextureReference(), rightFbo.getTextureReference().getTextureData().textureID);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -267,66 +164,9 @@ void DistortionManager::RenderDistortion(ofFbo& leftFbo, ofFbo& rightFbo) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glDrawElements(GL_TRIANGLES, _uiIndexSize / 2, GL_UNSIGNED_SHORT, (const void *)(_uiIndexSize));
 
-	//glBindTexture(GL_TEXTURE_2D, 0); //Added by Jon, trying to release hold on FBO textures
 	glBindVertexArray(0);
 	_lensShader.end();
-}
 
-void DistortionManager::RenderStereoTargets(ofFbo& leftFbo, ofFbo& rightFbo)
-{
-	//glClearColor(_clearColor.r, _clearColor.g, _clearColor.b, _clearColor.a);
-	glClearColor(1.0f, 1.0f, 0.0f, 1.0f); //0.08f
-	glEnable(GL_MULTISAMPLE);
-
-	// Left Eye
-	glBindFramebuffer(GL_FRAMEBUFFER, leftEyeDesc._nRenderFramebufferId);
-	//glBindTexture(GL_TEXTURE_2D, (GLuint)leftFbo.getTexture().getTextureData().textureID);
-	glViewport(0, 0, _nRenderWidth, _nRenderHeight);
-	//renderScene(vr::Eye_Left);
-	//Render scene
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glEnable(GL_DEPTH_TEST);
-	//End render scene
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-	glDisable(GL_MULTISAMPLE);
-
-	//glBindFramebuffer(GL_READ_FRAMEBUFFER, leftEyeDesc._nRenderFramebufferId);
-	glBindFramebuffer(GL_READ_FRAMEBUFFER, (GLuint)leftFbo.getTexture().getTextureData().textureID); //replacement
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, leftEyeDesc._nResolveFramebufferId);
-	//glBindFramebuffer(GL_DRAW_FRAMEBUFFER, (GLuint)leftFbo.getTexture().getTextureData().textureID); //replacement
-
-	glBlitFramebuffer(0, 0, _nRenderWidth, _nRenderHeight, 0, 0, _nRenderWidth, _nRenderHeight,
-		GL_COLOR_BUFFER_BIT,
-		GL_LINEAR);
-
-	glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-
-
-	glEnable(GL_MULTISAMPLE);
-
-	// Right Eye
-	glBindFramebuffer(GL_FRAMEBUFFER, rightEyeDesc._nRenderFramebufferId);
-	glViewport(0, 0, _nRenderWidth, _nRenderHeight);
-	//renderScene(vr::Eye_Right);
-	//Render scene
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glEnable(GL_DEPTH_TEST);
-	//End render scene
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-	glDisable(GL_MULTISAMPLE);
-
-	glBindFramebuffer(GL_READ_FRAMEBUFFER, rightEyeDesc._nRenderFramebufferId);
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, rightEyeDesc._nResolveFramebufferId);
-
-	glBlitFramebuffer(0, 0, _nRenderWidth, _nRenderHeight, 0, 0, _nRenderWidth, _nRenderHeight,
-		GL_COLOR_BUFFER_BIT,
-		GL_LINEAR);
-
-	glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 }
 
 /**
@@ -360,7 +200,6 @@ void DistortionManager::StoreDistortion(std::vector<VertexDataLens>& vVerts, std
 	ocg::app_log.AddLog("Done writing vertices file.\n");
 
 
-
 	// ---- Serialize vIndices ----
 	// Save in a file where 1 row = unsigned short
 	ocg::app_log.AddLog("Writing distortion indices file at \"distortion_indices.txt\"... \n");
@@ -375,6 +214,9 @@ void DistortionManager::StoreDistortion(std::vector<VertexDataLens>& vVerts, std
 
 }
 
+/**
+* Decodes the distorted vertices and indices created by StoreDistortion().
+*/
 bool DistortionManager::GetStoredDistortion(std::vector<VertexDataLens>& vVerts, std::vector<GLushort>& vIndices)
 {
 	//Read in vVerts
@@ -470,26 +312,26 @@ std::string DistortionManager::GetFragmentShader() {
 	fragment += STRINGIFY(
 		uniform sampler2D tex0;
 
-		noperspective  in vec2 v2UVred;
-		noperspective  in vec2 v2UVgreen;
-		noperspective  in vec2 v2UVblue;
+		noperspective in vec2 v2UVred;
+		noperspective in vec2 v2UVgreen;
+		noperspective in vec2 v2UVblue;
 
 		out vec4 outputColor;
 
 		void main()
 		{
-			float fBoundsCheck = ((dot(vec2(lessThan(v2UVgreen.xy, vec2(0.05, 0.05))), vec2(1.0, 1.0)) + dot(vec2(greaterThan(v2UVgreen.xy, vec2(0.95, 0.95))), vec2(1.0, 1.0))));
+			float fBoundsCheck = (dot(vec2(lessThan(v2UVgreen.xy, vec2(0.05, 0.05))), vec2(1.0, 1.0)) + dot(vec2(greaterThan(v2UVgreen.xy, vec2(0.95, 0.95))), vec2(1.0, 1.0)));
 			if (fBoundsCheck > 1.0)
 			{
-				outputColor = vec4(0, 1.0, 0, 1.0);
+				//Out of bounds, don't display the color
+				outputColor = vec4(0, 0, 0, 1.0);
 			}
 			else
 			{
-				float red = texture(tex0, v2UVred).x;
-				float green = texture(tex0, v2UVgreen).y;
-				float blue = texture(tex0, v2UVblue).z;
+				float red = texture(tex0, vec2(v2UVred.x, 1.0 - v2UVred.y)).x;
+				float green = texture(tex0, vec2(v2UVgreen.x, 1.0 - v2UVgreen.y)).y;
+				float blue = texture(tex0, vec2(v2UVblue.x, 1.0 - v2UVblue.y)).z;
 				outputColor = vec4(red, green, blue, 1.0);
-				//outputColor = vec4(red, green, blue, 0.0);
 
 				//Visualize UV position as RG
 				//outputColor = vec4(v2UVred.x, v2UVred.y, 0.0, 1.0);

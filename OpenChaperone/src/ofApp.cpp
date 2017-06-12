@@ -38,10 +38,13 @@ void ofApp::setup(){
 	SetGUITheme();
 
 	//ofSetFrameRate(120);
+	ofSetVerticalSync(ConfigHandler::GetValue("USE_VSYNC", false).asBool());
 
 	//Init class members
 	core = new OpenChaperoneCore();
-	compositor = new ImageCompositor(1280, 480); //Set to whatever you need for your cameras to fit side by side
+	compositor = new ImageCompositor(ofGetWindowWidth(), ofGetWindowHeight()); //Set to whatever you need for your cameras to fit side by side //1280, 480
+
+	ToggleTimingWindow(); //Turn off the timing window for now
 }
 
 void ofApp::update(){
@@ -103,7 +106,6 @@ void ofApp::DrawGUI() {
 		if (ImGui::MenuItem("Fullscreen", "F")) {
 			ofToggleFullscreen();
 		}
-		ImGui::MenuItem("Swap Eyes", "S", &(compositor->swapStereoSides));
 		ImGui::MenuItem("Help", nullptr, &showHelp);
 		if (ImGui::MenuItem("Quit", "ESC")) {
 			ofExit(EXIT_SUCCESS);
@@ -114,6 +116,13 @@ void ofApp::DrawGUI() {
 	if (ImGui::BeginMenu("Modules")) {
 		ImGui::MenuItem("Edge Detection", "E", &(core->edgeDetector.showGUI));
 		ImGui::MenuItem("Face Detection", nullptr, &(core->faceDetector.showGUI));
+
+		ImGui::EndMenu();
+	}
+
+	if (ImGui::BeginMenu("HMD")) {
+		ImGui::MenuItem("Swap Eyes", "S", &(compositor->swapStereoSides));
+		ImGui::MenuItem("Distortion", "D", &(compositor->doDistortion));
 
 		ImGui::EndMenu();
 	}

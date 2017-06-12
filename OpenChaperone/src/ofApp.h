@@ -48,7 +48,7 @@ class ofApp : public ofBaseApp, public UsesGUI {
 		void SetGUITheme();
 
 		FpsGraph fpsGraph = FpsGraph();
-		bool showPerformanceGraph = true;		//FpsGraph visibility on screen
+		bool showPerformanceGraph = false;		//FpsGraph visibility on screen
 
 		float coreFps;
 		float msFrameTarget = 1000.0f / 60.0f;

@@ -6,9 +6,11 @@ using namespace cv;
 
 ImageCompositor::ImageCompositor(const int width, const int height) {
 
+
+
 	messageFont.loadFont("fonts/ProggyClean.ttf", 26);
 	
-	//ofDisableArbTex();
+	ofDisableArbTex();
 
 	ofFbo::Settings windowFboSettings = ofFbo::Settings();
 	windowFboSettings.width = width;
@@ -16,9 +18,11 @@ ImageCompositor::ImageCompositor(const int width, const int height) {
 	windowFboSettings.internalformat = GL_RGB; //Can use GL_BGR?
 	windowFboSettings.textureTarget = GL_TEXTURE_2D;
 	windowFboSettings.numSamples = fboNumSamples;
+	//windowFboSettings.minFilter = GL_NEAREST;
+	//windowFboSettings.maxFilter = GL_NEAREST;
 
 	ofFbo::Settings imageFboSettings = windowFboSettings;
-	imageFboSettings.width = width / 2;
+	imageFboSettings.width = 1920 / 2;
 
 	//ofSetLogLevel(OF_LOG_SILENT);
 	windowFbo.allocate(windowFboSettings);
@@ -26,7 +30,7 @@ ImageCompositor::ImageCompositor(const int width, const int height) {
 	rightFbo.allocate(imageFboSettings);
 	//ofSetLogLevel(OF_LOG_NOTICE);
 
-	//ofEnableArbTex();
+	ofEnableArbTex();
 
 	distortion = DistortionManager();
 	distortion.Init();
@@ -67,15 +71,16 @@ void ImageCompositor::DrawWindowFbo() {
 	//windowFbo.draw(0, 0, windowFbo.getWidth(), windowFbo.getHeight());
 	//Fit windowFbo to ofWindow aspect
 	ofRectangle windowRect = ofRectangle(0, 0, ofGetWindowWidth(), ofGetWindowHeight());
-	ofRectangle windowFboRect = ofRectangle(0, 0, windowFbo.getWidth(), windowFbo.getHeight());
-	ofRectangle scaled = AspectFitRectToTarget(windowFboRect, windowRect);
-	windowFbo.draw(scaled);
+	/*ofRectangle windowFboRect = ofRectangle(0, 0, windowFbo.getWidth(), windowFbo.getHeight());
+	ofRectangle scaled = AspectFitRectToTarget(windowFboRect, windowRect);*/
+	windowFbo.draw(windowRect);
 	TS_STOP_NIF("Draw Window FBO");
 
+	TS_START_NIF("Distortion");
 	if (doDistortion) {
-		//distortion.RenderStereoTargets(leftFbo, rightFbo);
 		distortion.RenderDistortion(leftFbo, rightFbo);
 	}
+	TS_START_NIF("Distortion");
 }
 
 void ImageCompositor::DrawMatsToFbo(const cv::InputArray leftMat, cv::InputArray rightMat)
@@ -116,8 +121,10 @@ void ImageCompositor::DrawMatToFbo(const cv::InputArray input, ofFbo fbo, int co
 	//Draw the one image into the window fbo
 	TS_START_NIF("Draw Mat");
 	fbo.begin();
-		ofClear(0, 180, 0, 1.0f);
+		//ofClear(0, 180, 0, 1.0f);
+		ofClear(0, 0, 0, 1.0f);
 		//Draw image from mat
+		//TODO: Optimize here by preallocating image objects
 		ofImage output;
 		//ofTexture output;
 		TS_START_NIF("Allocate");
@@ -138,13 +145,28 @@ void ImageCompositor::DrawMatToFbo(const cv::InputArray input, ofFbo fbo, int co
 			cv::Mat flipped;
 			cv::flip(converted, flipped, 1);
 			output.setFromPixels(flipped.data, flipped.cols, flipped.rows, OF_IMAGE_COLOR);
-			output.mirror(false, true); //Twice as slow
+			//output.mirror(false, true); //Twice as slow
 			TS_STOP_NIF("Mirror Output");
 		}
 		
 		TS_START_NIF("Output Draw");
 		//output.update();
-		output.draw(0 + convergence, 0, fbo.getWidth(), fbo.getHeight());
+		//float heightRatio = output.getHeight() / fbo.getHeight();
+		//float widthRatio = output.getWidth() / fbo.getWidth();
+		//output.draw(0 + convergence, fbo.getHeight() / 4, fbo.getWidth(), output.getHeight());
+
+		/*ofRectangle windowFboRect = ofRectangle(0, 0, windowFbo.getWidth(), windowFbo.getHeight());
+		ofRectangle scaled = AspectFitRectToTarget(windowFboRect, windowRect);*/
+
+		ofRectangle fboRect = ofRectangle(0, 0, fbo.getWidth(), fbo.getHeight());
+		ofRectangle outputRect = ofRectangle(0, 0, output.getWidth(), output.getHeight());
+		ofRectangle scaled = AspectFitRectToTarget(outputRect, fboRect);
+		scaled.x += convergence;
+		output.draw(scaled);
+
+		//std::cout << fboRect.width << ", " << fboRect.height << "\n";
+
+
 		TS_STOP_NIF("Output Draw");
 	fbo.end();
 	TS_STOP_NIF("Draw Mat");
